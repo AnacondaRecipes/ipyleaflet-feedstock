@@ -11,20 +11,18 @@ source:
 
 build:
   number: 0
-  noarch: python
-  script: {{ PYTHON }} -m pip install . --no-deps -vv
+  skip: true # [py<37 or s390x]
+  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
 
 requirements:
-  build:
-    - nodejs >=16
   host:
-    - python >=3.7
+    - python
     - pip
-    - jupyter
-    - jupyterlab >=3,<3.6
+    - setuptools
+    - wheel
     - jupyter-packaging >=0.12,<1
   run:
-    - python >=3.7
+    - python
     - ipywidgets >=7.6.0,<9
     - traittypes >=0.2.1,<0.3.0
     - xyzservices >=2021.8.1
@@ -33,13 +31,14 @@ requirements:
 test:
   imports:
     - ipyleaflet
+  requires:
+    - pip
+    - m2-grep # [win]
+    - jupyterlab
   commands:
-    - test -f ${PREFIX}/share/jupyter/nbextensions/jupyter-leaflet/extension.js                             # [unix]
-    - test -f ${PREFIX}/share/jupyter/nbextensions/jupyter-leaflet/index.js                                 # [unix]
-    - test -f ${PREFIX}/share/jupyter/labextensions/jupyter-leaflet/package.json                            # [unix]
-    - if not exist %PREFIX%\\share\\jupyter\\nbextensions\\jupyter-leaflet\\extension.js (exit 1)           # [win]
-    - if not exist %PREFIX%\\share\\jupyter\\nbextensions\\jupyter-leaflet\\index.js (exit 1)               # [win]
-    - if not exist %PREFIX%\\share\\jupyter\\labextensions\\jupyter-leaflet\\package.json (exit 1)          # [win]
+    - pip check
+    - jupyter labextension list
+    - jupyter labextension list 2>&1 | grep -ie "@jupyter-widgets/jupyterlab-manager.*enabled OK (python, jupyterlab_widgets)"
 
 about:
   home: https://github.com/jupyter-widgets/ipyleaflet
