@@ -38,14 +38,15 @@ test:
   commands:
     - pip check
     - jupyter labextension list
-    - jupyter labextension list 2>&1 | grep -ie "@jupyter-widgets/jupyterlab-manager.*enabled OK (python, jupyterlab_widgets)"
+    - jupyter labextension list 2>&1 | grep -ie " jupyter-leaflet.*OK"
 
 about:
   home: https://github.com/jupyter-widgets/ipyleaflet
   license: MIT
+  license_family: MIT
   license_file: LICENSE
-  summary: A Jupyter widget for dynamic Leaflet maps
-  doc_url: http://ipyleaflet.readthedocs.io
+  summary: A Jupyter / Leaflet bridge enabling interactive maps in the Jupyter notebook.
+  doc_url: https://ipyleaflet.readthedocs.io
   dev_url: https://github.com/jupyter-widgets/ipyleaflet
 
 extra:
