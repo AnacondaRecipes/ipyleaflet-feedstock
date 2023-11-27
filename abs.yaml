@@ -1,4 +1,1 @@
 aggregate_check: false
-
-channels:
-  - https://staging.continuum.io/prefect/fs/traittypes-feedstock/pr2/9f6bf4c
