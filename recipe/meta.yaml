@@ -1,32 +1,92 @@
-{% set version = "0.17.4" %}
-{% set sha256 = "70e8772fe501da05a57e84a11734bf35fdd6b7dfb556a3dbfe93b5ab6fe747ae" %}
+{% set name = "ipyleaflet" %}
+{% set version = "0.19.2" %}
 
 package:
-  name: ipyleaflet
+  #name: {{ name }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/i/ipyleaflet/ipyleaflet-{{ version }}.tar.gz
-  sha256: {{ sha256 }}
+  - url: https://pypi.org/packages/source/i/ipyleaflet/ipyleaflet-{{ version }}.tar.gz
+    sha256: b3b83fe3460e742964c2a5924ea7934365a3749bb75310ce388d45fd751372d2
+    folder: ipyleaflet
+  - url: https://pypi.org/packages/source/j/jupyter_leaflet/jupyter_leaflet-{{ version }}.tar.gz
+    sha256: b09b5ba48b1488cb61da37a6f558347269eb53ff6d64dc1a73e005ffc4420063
+    folder: jupyter_leaflet
+
 
 build:
   number: 0
-  skip: true # [py<37 or s390x]
-  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
+  skip: true # [py<38 or s390x]
+  #script: {{ PYTHON }} -m pip install ipyleaflet --no-deps --no-build-isolation -vv
 
 requirements:
   host:
     - python
     - pip
+    - hatchling
     - setuptools
     - wheel
     - jupyter-packaging >=0.12,<1
-  run:
-    - python
-    - ipywidgets >=7.6.0,<9
-    - traittypes >=0.2.1,<0.3.0
-    - xyzservices >=2021.8.1
-    - branca >=0.5.0
+
+outputs:
+  - name: jupyter_leaflet
+    version: {{ version }}
+    build:
+      script: cd jupyter_leaflet && python -m pip install . --no-deps --no-build-isolation -vv
+    requirements:
+      host:
+        - python
+        - pip
+        - nodejs >=18,<19
+        - hatch-jupyter-builder >=0.8.1
+        - hatchling
+        - jupyterlab >=4,<5
+        - hatch-nodejs-version >=0.3.2
+      # run:
+      #   - hatch-jupyter-builder >=0.8.1
+      #   - jupyterlab >=4,<5
+      #   - hatch-nodejs-version >=0.3.2
+        
+    
+  - name: {{ name }}
+    version: {{ version }}
+    build:
+      script: cd ipyleaflet && python -m pip install . --no-deps --no-build-isolation -vv
+    requirements:
+      host:
+        - python
+        - pip
+        - hatchling
+      run:
+        - python
+        - ipywidgets >=7.6.0,<9
+        - traittypes >=0.2.1,<0.3.0
+        - xyzservices >=2021.8.1
+        - branca >=0.5.0
+        - jupyter_leaflet
+      run_constrained:
+        - jupyter_leaflet ={{ version }}
+    # test:
+    #   requires:
+    #     - python
+    #   imports:
+    #     - ipyleaflet
+
+# requirements:
+#   host:
+#     - python
+#     - pip
+#     - hatchling
+#     - setuptools
+#     - wheel
+#     - jupyter-packaging >=0.12,<1
+#   run:
+#     - python
+#     - ipywidgets >=7.6.0,<9
+#     - traittypes >=0.2.1,<0.3.0
+#     - xyzservices >=2021.8.1
+#     - branca >=0.5.0
+#     - jupyter-leaflet
 
 test:
   imports:
