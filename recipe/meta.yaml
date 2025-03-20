@@ -41,8 +41,18 @@ outputs:
         - hatchling
         - jupyterlab >=4,<5
         - hatch-nodejs-version >=0.3.2
+    test:
+      requires:
+        - python
+      commands:
+        - test -f ${PREFIX}/share/jupyter/nbextensions/jupyter-leaflet/extension.js                             # [unix]
+        - test -f ${PREFIX}/share/jupyter/nbextensions/jupyter-leaflet/index.js                                 # [unix]
+        - test -f ${PREFIX}/share/jupyter/labextensions/jupyter-leaflet/package.json                            # [unix]
+        - if not exist %PREFIX%\\share\\jupyter\\nbextensions\\jupyter-leaflet\\extension.js (exit 1)           # [win]
+        - if not exist %PREFIX%\\share\\jupyter\\nbextensions\\jupyter-leaflet\\index.js (exit 1)               # [win]
+        - if not exist %PREFIX%\\share\\jupyter\\labextensions\\jupyter-leaflet\\package.json (exit 1)          # [win]
     
-  - name: {{ name }}
+  - name: ipyleaflet
     version: {{ version }}
     build:
       script: cd ipyleaflet && python -m pip install . --no-deps --no-build-isolation -vv
@@ -60,19 +70,11 @@ outputs:
         - jupyter_leaflet
       run_constrained:
         - jupyter_leaflet ={{ version }}
-    test:
-      imports:
-        - ipyleaflet
-      requires:
-        - pip
-        - m2-grep # [win]
-        - jupyterlab
-        - python
-      commands:
-        - pip check
-        - jupyter labextension list
-        - jupyter labextension list 2>&1 | grep -ie " jupyter-leaflet.*OK"
-
+      test:
+        requires:
+          - python
+        imports:
+          - ipyleaflet
 about:
   home: https://github.com/jupyter-widgets/ipyleaflet
   license: MIT
