@@ -2,7 +2,7 @@
 {% set version = "0.19.2" %}
 
 package:
-  #name: {{ name }}
+  name: {{ name }}-split
   version: {{ version }}
 
 source:
@@ -17,7 +17,6 @@ source:
 build:
   number: 0
   skip: true # [py<38 or s390x]
-  #script: {{ PYTHON }} -m pip install ipyleaflet --no-deps --no-build-isolation -vv
 
 requirements:
   host:
@@ -42,11 +41,6 @@ outputs:
         - hatchling
         - jupyterlab >=4,<5
         - hatch-nodejs-version >=0.3.2
-      # run:
-      #   - hatch-jupyter-builder >=0.8.1
-      #   - jupyterlab >=4,<5
-      #   - hatch-nodejs-version >=0.3.2
-        
     
   - name: {{ name }}
     version: {{ version }}
@@ -66,39 +60,18 @@ outputs:
         - jupyter_leaflet
       run_constrained:
         - jupyter_leaflet ={{ version }}
-    # test:
-    #   requires:
-    #     - python
-    #   imports:
-    #     - ipyleaflet
-
-# requirements:
-#   host:
-#     - python
-#     - pip
-#     - hatchling
-#     - setuptools
-#     - wheel
-#     - jupyter-packaging >=0.12,<1
-#   run:
-#     - python
-#     - ipywidgets >=7.6.0,<9
-#     - traittypes >=0.2.1,<0.3.0
-#     - xyzservices >=2021.8.1
-#     - branca >=0.5.0
-#     - jupyter-leaflet
-
-test:
-  imports:
-    - ipyleaflet
-  requires:
-    - pip
-    - m2-grep # [win]
-    - jupyterlab
-  commands:
-    - pip check
-    - jupyter labextension list
-    - jupyter labextension list 2>&1 | grep -ie " jupyter-leaflet.*OK"
+    test:
+      imports:
+        - ipyleaflet
+      requires:
+        - pip
+        - m2-grep # [win]
+        - jupyterlab
+        - python
+      commands:
+        - pip check
+        - jupyter labextension list
+        - jupyter labextension list 2>&1 | grep -ie " jupyter-leaflet.*OK"
 
 about:
   home: https://github.com/jupyter-widgets/ipyleaflet
