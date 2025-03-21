@@ -21,11 +21,6 @@ build:
 requirements:
   host:
     - python
-    - pip
-    - hatchling
-    - setuptools
-    - wheel
-    - jupyter-packaging >=0.12,<1
 
 outputs:
   - name: jupyter_leaflet
@@ -71,9 +66,7 @@ outputs:
         - traittypes >=0.2.1,<0.3.0
         - xyzservices >=2021.8.1
         - branca >=0.5.0
-        - jupyter_leaflet
-      run_constrained:
-        - jupyter_leaflet ={{ version }}
+        - {{ pin_subpackage('jupyter_leaflet', max_pin='x.x') }}
       test:
         requires:
           - python
