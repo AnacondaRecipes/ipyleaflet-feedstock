@@ -42,16 +42,20 @@ outputs:
         - jupyterlab >=4,<5
         - hatch-nodejs-version >=0.3.2
     test:
+      imports:
+        - jupyter_leaflet
       requires:
         - python
+        - pip
       commands:
+        - pip check
         - test -f ${PREFIX}/share/jupyter/nbextensions/jupyter-leaflet/extension.js                             # [unix]
         - test -f ${PREFIX}/share/jupyter/nbextensions/jupyter-leaflet/index.js                                 # [unix]
         - test -f ${PREFIX}/share/jupyter/labextensions/jupyter-leaflet/package.json                            # [unix]
         - if not exist %PREFIX%\\share\\jupyter\\nbextensions\\jupyter-leaflet\\extension.js (exit 1)           # [win]
         - if not exist %PREFIX%\\share\\jupyter\\nbextensions\\jupyter-leaflet\\index.js (exit 1)               # [win]
         - if not exist %PREFIX%\\share\\jupyter\\labextensions\\jupyter-leaflet\\package.json (exit 1)          # [win]
-    
+
   - name: ipyleaflet
     version: {{ version }}
     build:
@@ -73,14 +77,21 @@ outputs:
       test:
         requires:
           - python
+          - pip
         imports:
           - ipyleaflet
+        commands:
+          - pip check
 about:
   home: https://github.com/jupyter-widgets/ipyleaflet
   license: MIT
   license_family: MIT
   license_file: LICENSE
   summary: A Jupyter / Leaflet bridge enabling interactive maps in the Jupyter notebook.
+  description: |
+    Ipyleaflet is a Jupyter widget for Leaflet.js , enabling interactive maps in the Jupyter notebook.
+    Every object in ipyleaflet (including the Map, TileLayers, Layers, Controls, etc.) is interactive: 
+    you can dynamically update attributes from Python or from the browser.
   doc_url: https://ipyleaflet.readthedocs.io
   dev_url: https://github.com/jupyter-widgets/ipyleaflet
 
