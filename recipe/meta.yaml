@@ -31,7 +31,7 @@ outputs:
       host:
         - python
         - pip
-        - nodejs >=18,<19
+        - nodejs
         - hatch-jupyter-builder >=0.8.1
         - hatchling
         - jupyterlab >=4,<5
