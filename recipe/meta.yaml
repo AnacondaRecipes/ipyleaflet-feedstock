@@ -1,51 +1,90 @@
-{% set version = "0.17.4" %}
-{% set sha256 = "70e8772fe501da05a57e84a11734bf35fdd6b7dfb556a3dbfe93b5ab6fe747ae" %}
+{% set name = "ipyleaflet" %}
+{% set version = "0.19.2" %}
 
 package:
-  name: ipyleaflet
+  name: {{ name }}-split
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/i/ipyleaflet/ipyleaflet-{{ version }}.tar.gz
-  sha256: {{ sha256 }}
+  - url: https://pypi.org/packages/source/i/ipyleaflet/ipyleaflet-{{ version }}.tar.gz
+    sha256: b3b83fe3460e742964c2a5924ea7934365a3749bb75310ce388d45fd751372d2
+    folder: ipyleaflet
+  - url: https://pypi.org/packages/source/j/jupyter_leaflet/jupyter_leaflet-{{ version }}.tar.gz
+    sha256: b09b5ba48b1488cb61da37a6f558347269eb53ff6d64dc1a73e005ffc4420063
+    folder: jupyter_leaflet
+
 
 build:
   number: 0
-  skip: true # [py<37 or s390x]
-  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
+  skip: true # [py<38 or s390x]
 
 requirements:
   host:
     - python
-    - pip
-    - setuptools
-    - wheel
-    - jupyter-packaging >=0.12,<1
-  run:
-    - python
-    - ipywidgets >=7.6.0,<9
-    - traittypes >=0.2.1,<0.3.0
-    - xyzservices >=2021.8.1
-    - branca >=0.5.0
 
-test:
-  imports:
-    - ipyleaflet
-  requires:
-    - pip
-    - m2-grep # [win]
-    - jupyterlab
-  commands:
-    - pip check
-    - jupyter labextension list
-    - jupyter labextension list 2>&1 | grep -ie " jupyter-leaflet.*OK"
+outputs:
+  - name: jupyter_leaflet
+    version: {{ version }}
+    build:
+      script: cd jupyter_leaflet && python -m pip install . --no-deps --no-build-isolation -vv
+    requirements:
+      host:
+        - python
+        - pip
+        - nodejs
+        - hatch-jupyter-builder >=0.8.1
+        - hatchling
+        - jupyterlab >=4,<5
+        - hatch-nodejs-version >=0.3.2
+    test:
+      imports:
+        - jupyter_leaflet
+      requires:
+        - python
+        - pip
+      commands:
+        - pip check
+        - test -f ${PREFIX}/share/jupyter/nbextensions/jupyter-leaflet/extension.js                             # [unix]
+        - test -f ${PREFIX}/share/jupyter/nbextensions/jupyter-leaflet/index.js                                 # [unix]
+        - test -f ${PREFIX}/share/jupyter/labextensions/jupyter-leaflet/package.json                            # [unix]
+        - if not exist %PREFIX%\\share\\jupyter\\nbextensions\\jupyter-leaflet\\extension.js (exit 1)           # [win]
+        - if not exist %PREFIX%\\share\\jupyter\\nbextensions\\jupyter-leaflet\\index.js (exit 1)               # [win]
+        - if not exist %PREFIX%\\share\\jupyter\\labextensions\\jupyter-leaflet\\package.json (exit 1)          # [win]
 
+  - name: ipyleaflet
+    version: {{ version }}
+    build:
+      script: cd ipyleaflet && python -m pip install . --no-deps --no-build-isolation -vv
+    requirements:
+      host:
+        - python
+        - pip
+        - hatchling
+      run:
+        - python
+        - ipywidgets >=7.6.0,<9
+        - traittypes >=0.2.1,<0.3.0
+        - xyzservices >=2021.8.1
+        - branca >=0.5.0
+        - {{ pin_subpackage('jupyter_leaflet', max_pin='x.x') }}
+      test:
+        requires:
+          - python
+          - pip
+        imports:
+          - ipyleaflet
+        commands:
+          - pip check
 about:
   home: https://github.com/jupyter-widgets/ipyleaflet
   license: MIT
   license_family: MIT
   license_file: LICENSE
   summary: A Jupyter / Leaflet bridge enabling interactive maps in the Jupyter notebook.
+  description: |
+    Ipyleaflet is a Jupyter widget for Leaflet.js , enabling interactive maps in the Jupyter notebook.
+    Every object in ipyleaflet (including the Map, TileLayers, Layers, Controls, etc.) is interactive: 
+    you can dynamically update attributes from Python or from the browser.
   doc_url: https://ipyleaflet.readthedocs.io
   dev_url: https://github.com/jupyter-widgets/ipyleaflet
 
