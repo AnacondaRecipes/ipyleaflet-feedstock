@@ -6,7 +6,7 @@ package:
   version: {{ version }}
 
 source:
-  - url: https://pypi.org/packages/source/i/ipyleaflet/ipyleaflet-{{ version }}.tar.gz
+  - url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
     sha256: 098f317dd63c4bcac5176d5b78d40d5758c623f7cd013f0d0c9d7a70cefcdb34
     folder: ipyleaflet
   - url: https://pypi.org/packages/source/j/jupyter_leaflet/jupyter_leaflet-{{ version }}.tar.gz
