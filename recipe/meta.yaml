@@ -15,7 +15,7 @@ source:
 
 build:
   number: 0
-  skip: true  # [py<38 or s390x]
+  skip: true  # [py<38]
 
 requirements:
   host:
